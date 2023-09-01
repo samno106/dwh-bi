@@ -1,20 +1,93 @@
-import { Fingerprint, LogOut } from "lucide-react";
+"use client";
+
+import { Cable, Fingerprint, Grip, LayoutGrid, LayoutList, LogOut, Menu, PieChart, Radar, Repeat, ShieldCheck, Wallet } from "lucide-react";
 import { Button } from "../ui/button";
 import Logo from "./logo";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
-const BaseNavbar = ()=>{
+export function BaseNavbar ({
+    ...props
+}: React.HTMLAttributes<HTMLElement>){
+
+    const pathname = usePathname();
+
+    const routes = [
+        {
+            href:"/",
+            label:'Overview',
+            icon:<LayoutGrid className="w-4 h-4"/> ,
+            active:pathname === "/",
+        },
+        {
+            href:"/operation",
+            label:'Operation',
+            icon:<Repeat className="w-4 h-4"/> ,
+            active:pathname === "/operation",
+        },
+        {
+            href:"/business",
+            label:'Business',
+            icon:<PieChart className="w-4 h-4"/> ,
+            active:pathname === "/business",
+        },
+        {
+            href:"/finance",
+            label:'Finance',
+            icon:<Wallet className="w-4 h-4"/> ,
+            active:pathname === "/finance",
+        },
+        {
+            href:"/complaince",
+            label:'Complaince',
+            icon:<Cable className="w-4 h-4"/> ,
+            active:pathname === "/complaince",
+        },
+        {
+            href:"/risk",
+            label:'Risk',
+            icon:<ShieldCheck className="w-4 h-4"/> ,
+            active:pathname === "/risk",
+        },
+        {
+            href:"/audit",
+            label:'Audit',
+            icon:<Radar className="w-4 h-4"/> ,
+            active:pathname === "/audit",
+        }
+    ];
 
     return(
         <div>
             <nav className="w-full bg-white border-b fixed top-0 left-0 right-0 z-10 px-10 py-2 flex items-center">
                 {/* logo */}
-                <div>
+                <div className="w-full md:w-56">
                     <Logo/>
                 </div>
                 {/* logo */}
                 {/* menu */}
                 <div>
-
+                    <ul className="flex justify-between items-center">
+                        {
+                            routes.map((route)=>(
+                            <li className="mx-3" key={route.href}>
+                                <Link
+                                href={route.href}
+                                className={cn("font-medium flex flex-row items-center hover:text-blue-600", route.active?"text-blue-600":"text-gray-600")}
+                                    >
+                                     {route.icon}  
+                                    <span className="text-xs ml-2">{route.label}</span>
+                                    </Link>
+                                </li>
+                            ))
+                        }
+                        <li className="mx-5">
+                        <Button size="icon" className="shadow-none h-8 w-8 bg-blue-700 hover:bg-blue-800 rounded-lg">
+                            <Grip className="w-4 h-4"/>
+                        </Button>
+                        </li>
+                    </ul>
                 </div>
                 {/* menu */}
                 {/* profile */}
