@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model departments {
+  id         Int       @id() @default(autoincrement())
+  name       String
+  short_name String
+  code       String
+  status     Boolean   @default(false)
+  users      users[]   @relation("departmentUser")
+  created_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
+  reports    reports[] @relation("departmentReport")
+}
+
+model positions {
+  id         Int       @id() @default(autoincrement())
+  name       String
+  code       String
+  status     Boolean   @default(false)
+  created_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
+  users      users[]   @relation("positionUser")
+}
+
+model roles {
+  id         Int       @id() @default(autoincrement())
+  name       String
+  code       String
+  status     Boolean   @default(false)
+  created_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
+  users      users[]   @relation("roleUser")
+}
+
+model users {
+  id                  Int         @id() @default(autoincrement())
+  full_name           String
+  staff_id            String
+  username            String
+  password            String
+  password_expired    DateTime?
+  password_reseted_at DateTime?
+  status              Boolean     @default(false)
+  department          departments @relation("departmentUser", fields: [department_id], references: [id])
+  position            positions   @relation("positionUser", fields: [position_id], references: [id])
+  role                roles       @relation("roleUser", fields: [role_id], references: [id])
+  department_id       Int
+  position_id         Int
+  role_id             Int
+  created_at          DateTime?   @default(now())
+  updated_at          DateTime?   @updatedAt
+
+  @@index([department_id])
+  @@index([position_id])
+  @@index([role_id])
+}
+
+model reports {
+  id            Int         @id() @default(autoincrement())
+  name          String
+  code          String
+  status        Boolean     @default(false)
+  department    departments @relation("departmentReport", fields: [department_id], references: [id])
+  department_id Int
+  created_at    DateTime?   @default(now())
+  updated_at    DateTime?   @updatedAt
+
+  @@index([department_id])
+}
