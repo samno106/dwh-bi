@@ -12,7 +12,7 @@ datasource db {
 }
 
 model departments {
-  id         Int       @id() @default(autoincrement())
+  id         String    @id() @default(uuid())
   name       String
   short_name String
   code       String
@@ -24,7 +24,7 @@ model departments {
 }
 
 model positions {
-  id         Int       @id() @default(autoincrement())
+  id         String    @id() @default(uuid())
   name       String
   code       String
   status     Boolean   @default(false)
@@ -34,7 +34,7 @@ model positions {
 }
 
 model roles {
-  id         Int       @id() @default(autoincrement())
+  id         String    @id() @default(uuid())
   name       String
   code       String
   status     Boolean   @default(false)
@@ -44,10 +44,10 @@ model roles {
 }
 
 model users {
-  id                  Int         @id() @default(autoincrement())
+  id                  String      @id() @default(uuid())
   full_name           String
   staff_id            String
-  username            String
+  username            String      @unique
   password            String
   password_expired    DateTime?
   password_reseted_at DateTime?
@@ -55,9 +55,9 @@ model users {
   department          departments @relation("departmentUser", fields: [department_id], references: [id])
   position            positions   @relation("positionUser", fields: [position_id], references: [id])
   role                roles       @relation("roleUser", fields: [role_id], references: [id])
-  department_id       Int
-  position_id         Int
-  role_id             Int
+  department_id       String
+  position_id         String
+  role_id             String
   created_at          DateTime?   @default(now())
   updated_at          DateTime?   @updatedAt
 
@@ -67,12 +67,12 @@ model users {
 }
 
 model reports {
-  id            Int         @id() @default(autoincrement())
+  id            String      @id() @default(uuid())
   name          String
   code          String
   status        Boolean     @default(false)
   department    departments @relation("departmentReport", fields: [department_id], references: [id])
-  department_id Int
+  department_id String
   created_at    DateTime?   @default(now())
   updated_at    DateTime?   @updatedAt
 

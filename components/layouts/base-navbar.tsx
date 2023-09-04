@@ -6,6 +6,8 @@ import Logo from "./logo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { DropdownMenu } from "./dropdown-menu";
+
 
 export function BaseNavbar ({
     ...props
@@ -83,9 +85,7 @@ export function BaseNavbar ({
                             ))
                         }
                         <li className="mx-5">
-                        <Button size="icon" className="shadow-none h-8 w-8 bg-blue-700 hover:bg-blue-800 rounded-lg">
-                            <Grip className="w-4 h-4"/>
-                        </Button>
+                        <DropdownMenu/>
                         </li>
                     </ul>
                 </div>

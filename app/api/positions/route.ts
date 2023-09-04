@@ -4,31 +4,26 @@ export async function POST(req:Request) {
     try {
 
         const body = await req.json();
-        const {name,short_name,code} = body;
+        const {name,code} = body;
 
         if(!name){
             return new Response("Name is required", {status:400})
-        }
-
-        if(!short_name){
-            return new Response("Short name is required", {status:400})
         }
 
         if(!code){
             return new Response("Code is required", {status:400})
         }
 
-        const departments = await prismadb.departments.create({
+        const positions = await prismadb.positions.create({
             data:{
                 name,
-                short_name,
                 code,
             }
         });
-        return Response.json(departments);
+        return Response.json(positions);
         
     } catch (error) {
-        console.log('[DEPART_POST]', error);
+        console.log('[POSITION_POST]', error);
         return new Response("Internal error", {status:500})
     }
 }
