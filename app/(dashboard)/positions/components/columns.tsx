@@ -7,7 +7,7 @@ export type PositionColumn = {
   id: string
   name: string
   code: string
-  status: "false" | "true"
+  status: false | true
   
 }
 

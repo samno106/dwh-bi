@@ -8,7 +8,7 @@ export type DepartmentColumn = {
   name: string
   short_name: string
   code: string
-  status: "false" | "true"
+  status: false | true
   
 }
 

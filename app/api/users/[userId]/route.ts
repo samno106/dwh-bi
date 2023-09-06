@@ -1,13 +1,19 @@
 import prismadb from "@/lib/prismadb";
 
-export async function POST(req: Request) {
+export async function PATCH(
+  req: Request,
+  {
+    params,
+  }: {
+    params: { userId: string };
+  }
+) {
   try {
     const body = await req.json();
     const {
       full_name,
       staff_id,
       username,
-      password,
       department_id,
       position_id,
       role_id,
@@ -36,39 +42,47 @@ export async function POST(req: Request) {
       return new Response("Role is required", { status: 400 });
     }
 
-    const positions = await prismadb.users.create({
+    const users = await prismadb.users.updateMany({
+      where: {
+        id: params.userId,
+      },
       data: {
         full_name,
         staff_id,
         username,
-        password,
         department_id,
         position_id,
         role_id,
       },
     });
-    return Response.json(positions);
+    return Response.json(users);
   } catch (error) {
-    console.log("[USER_POST]", error);
+    console.log("[USER_PATCH]", error);
     return new Response("Internal error", { status: 500 });
   }
 }
 
-export async function GET(req: Request) {
+export async function DELETE(
+  req: Request,
+  {
+    params,
+  }: {
+    params: { userId: string };
+  }
+) {
   try {
-    const users = await prismadb.users.findMany({
-      include: {
-        department: true,
-        position: true,
-        role: true,
-      },
-      orderBy: {
-        created_at: "desc",
+    if (!params.userId) {
+      return new Response("User id is required", { status: 400 });
+    }
+
+    const users = await prismadb.users.deleteMany({
+      where: {
+        id: params.userId,
       },
     });
     return Response.json(users);
   } catch (error) {
-    console.log("[USER_GET]", error);
+    console.log("[USER_DELETE]", error);
     return new Response("Internal error", { status: 500 });
   }
 }

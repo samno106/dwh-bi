@@ -1,94 +1,139 @@
 "use client";
-
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { ArrowRight, KeyRound, User } from "lucide-react";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import axios from "axios";
+import { API_END_POINT, TOKEN_COOKIES } from "@/constant/api-end-point";
+import { setToken } from "@/lib/get-token";
 
 const formSchema = z.object({
-    username:z.string().min(1),
-    password:z.string().min(6),
+  username: z.string().min(1),
+  password: z.string().min(6),
 });
 
+export const LoginForm = () => {
+  const [loading, setLoading] = useState(false);
 
-export const LoginForm = () =>{
+  const router = useRouter();
 
-    const router = useRouter();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  });
 
-    const [loading, setLoading] = useState(false);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const toastId = toast.loading("Loading...");
+    try {
+      setLoading(true);
+      await axios
+        .post(`${process.env.API_URL + "" + API_END_POINT.AUTH}`, values)
+        .then(({ data }) => {
+          if (data.status.code == 200) {
+            console.log(data.data.jwttoken);
+            setToken(data.data.jwttoken);
+            router.push("/");
+            toast.success("You're login success.", {
+              id: toastId,
+            });
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver:zodResolver(formSchema),
-        defaultValues:{
-            username:"",
-            password:""
-        },
-    });
+            return data.data.jwttoken;
+          } else if (data.status.code == 401) {
+            toast.error("username or password is incorrect", {
+              id: toastId,
+            });
+          }
+        });
+    } catch (error) {
+      toast.error("Internal server error.", {
+        id: toastId,
+      });
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const onLogin = async(values:z.infer<typeof formSchema>)=>{
-        try {
-         setLoading(true);
+  return (
+    <div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-xs font-medium leading-6 text-gray-600">
+                  Username
+                </FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <User className="w-4 h-4 absolute top-3 left-2 text-gray-500" />
+                    <Input
+                      disabled={loading}
+                      placeholder="Username"
+                      {...field}
+                      className="rounded py-5 pl-9 border-gray-300 text-xs"
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem className="mt-5">
+                <FormLabel className="text-xs font-medium leading-6 text-gray-600">
+                  Password
+                </FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <KeyRound className="w-4 h-4 absolute top-3 left-2 text-gray-500" />
+                    <Input
+                      type="password"
+                      disabled={loading}
+                      placeholder="Password"
+                      {...field}
+                      className="rounded py-5 pl-9 border-gray-300 text-xs"
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-         router.refresh();
-         router.push('/');
-         toast.success("You're login success.");
-    
-        } catch (error) {
-            
-        }finally{
-         setLoading(false);
-        }
-     }
-
-     return(
-        <>
-        <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onLogin)}>
-                        <FormField control={form.control}
-                                name="username"
-                                render={({field})=>(
-                                    <FormItem>
-                                        <FormLabel className="text-xs font-medium leading-6 text-gray-600">Username</FormLabel>
-                                        <FormControl>
-                                            <div className="relative">
-                                                <User className="w-4 h-4 absolute top-3 left-2 text-gray-500"/>
-                                                <Input disabled={loading} placeholder="Username" {...field} className="rounded py-5 pl-9 border-gray-300 text-xs" />
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}/>
-                        <FormField control={form.control}
-                                name="password"
-                                render={({field})=>(
-                                    <FormItem className="mt-5">
-                                        <FormLabel className="text-xs font-medium leading-6 text-gray-600">Password</FormLabel>
-                                        <FormControl>
-                                            <div className="relative">
-                                                <KeyRound className="w-4 h-4 absolute top-3 left-2 text-gray-500"/>
-                                                <Input type="password" disabled={loading} placeholder="Password" {...field} className="rounded py-5 pl-9 border-gray-300 text-xs" />
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}/>
-
-                        <div className="mt-8 flex">
-                            <Button type="submit" disabled={loading} size="icon" className="ml-auto rounded-full bg-blue-600 hover:bg-blue-700">
-                                <ArrowRight className="w-5 h-5"/>
-                            </Button>
-                        </div>
-                    </form>
-
-                </Form>
-        </>
-     );
-    
-
-}
+          <div className="mt-8 flex">
+            <Button
+              type="submit"
+              disabled={loading}
+              size="icon"
+              className="ml-auto rounded-full w-11 h-11"
+            >
+              <ArrowRight className="w-5 h-5" />
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
+  );
+};

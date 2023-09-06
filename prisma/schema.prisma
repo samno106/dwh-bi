@@ -46,7 +46,7 @@ model roles {
 model users {
   id                  String      @id() @default(uuid())
   full_name           String
-  staff_id            String
+  staff_id            String      @unique
   username            String      @unique
   password            String
   password_expired    DateTime?
