@@ -132,8 +132,6 @@ export function DropdownMenu({ ...props }: React.HTMLAttributes<HTMLElement>) {
                 <li key={route.href}>
                   <Link
                     href={route.href}
-                    shallow={true}
-                    replace
                     className={cn(
                       " text-gray-700 px-3 py-2 my-2 text-xs hover:bg-blue-100 hover:text-blue-700 flex items-center rounded",
                       route.active
@@ -161,8 +159,6 @@ export function DropdownMenu({ ...props }: React.HTMLAttributes<HTMLElement>) {
                 <li key={route.href}>
                   <Link
                     href={route.href}
-                    shallow={true}
-                    replace
                     className={cn(
                       " text-gray-700 px-3 my-2 py-2 text-xs hover:bg-blue-100 hover:text-blue-700 flex items-center rounded",
                       route.active
@@ -190,8 +186,6 @@ export function DropdownMenu({ ...props }: React.HTMLAttributes<HTMLElement>) {
                 <li key={route.href}>
                   <Link
                     href={route.href}
-                    shallow={true}
-                    replace
                     className={cn(
                       " text-gray-700 px-3 py-2 my-2 text-xs hover:bg-blue-100 hover:text-blue-700 flex items-center rounded",
                       route.active

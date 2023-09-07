@@ -14,19 +14,94 @@ import {
 import { Button } from "../ui/button";
 import Logo from "./logo";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { DropdownMenu } from "./dropdown-menu";
+import { API_END_POINT, TOKEN_COOKIES } from "@/constant/api-end-point";
+import React, { useEffect, useState } from "react";
+import { getToken, removeToken } from "@/lib/init-token";
+import axios from "axios";
+import toast from "react-hot-toast";
 
-export function BaseNavbar({ ...props }: React.HTMLAttributes<HTMLElement>) {
+export const BaseNavbar = () => {
   const pathname = usePathname();
+
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState({
+    id: "",
+    full_name: "",
+    department: {
+      id: "",
+      name: "",
+      code: "",
+    },
+    position: {
+      id: "",
+      name: "",
+      code: "",
+    },
+    role: {
+      id: "",
+      name: "",
+      code: "",
+    },
+  });
+
+  const logOut = async () => {
+    const toastId = toast.loading("Loading...");
+    try {
+      setLoading(true);
+
+      const token = await getToken(TOKEN_COOKIES.TOKEN_NAME);
+
+      if (token) {
+        removeToken(TOKEN_COOKIES.TOKEN_NAME, TOKEN_COOKIES.AUTH_ID);
+        router.refresh();
+
+        router.push("/login");
+        setLoading(false);
+        toast.success("You're logout.", {
+          id: toastId,
+        });
+      }
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getProfile = async () => {
+    try {
+      const token = getToken(TOKEN_COOKIES.TOKEN_NAME);
+      await axios
+        .post(
+          `${process.env.API_URL + "" + API_END_POINT.PROFILE}`,
+          {},
+          {
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        .then(({ data }) => {
+          setUser(data.data);
+        });
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    getProfile();
+  }, [loading]);
 
   const routes = [
     {
-      href: "/",
+      href: "/dashboard",
       label: "Overview",
       icon: <LayoutGrid className="w-4 h-4" />,
-      active: pathname === "/",
+      active: pathname === "/dashboard",
     },
     {
       href: "/operation",
@@ -81,7 +156,6 @@ export function BaseNavbar({ ...props }: React.HTMLAttributes<HTMLElement>) {
               <li className="mx-3" key={route.href}>
                 <Link
                   href={route.href}
-                  shallow={true}
                   className={cn(
                     "font-medium flex flex-row items-center hover:text-blue-600",
                     route.active ? "text-blue-600" : "text-gray-600"
@@ -105,11 +179,13 @@ export function BaseNavbar({ ...props }: React.HTMLAttributes<HTMLElement>) {
               <Fingerprint className="w-4 h-4" />
             </div>
             <span className="ml-2 text-blue-900 uppercase text-xs font-semibold">
-              Admin
+              {user.full_name !== null ? user.full_name : "loading..."}
             </span>
           </div>
           <Button
             size="icon"
+            disabled={loading}
+            onClick={() => logOut()}
             className=" flex rounded-xl  ml-3  h-9 w-9 bg-blue-300 text-blue-900 hover:text-white shadow-none"
           >
             <LogOut className="w-4 h-4" />
@@ -119,6 +195,6 @@ export function BaseNavbar({ ...props }: React.HTMLAttributes<HTMLElement>) {
       </nav>
     </div>
   );
-}
+};
 
 export default BaseNavbar;

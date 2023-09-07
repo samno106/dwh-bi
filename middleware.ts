@@ -1,21 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { TOKEN_COOKIES } from "./constant/api-end-point";
-import { getToken } from "./lib/get-token";
 
 export function middleware(request: NextRequest, response: NextResponse) {
-  const auth = getToken();
+  const auth = request.cookies.has(`${TOKEN_COOKIES.TOKEN_NAME}`);
 
   if (request.nextUrl.pathname.startsWith("/login") && !auth) {
     return;
   }
 
-  if (request.url.includes("/login") && auth) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
   if (!auth) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
+
+  if (request.url.includes("/login") && auth) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {

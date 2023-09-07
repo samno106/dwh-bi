@@ -1,8 +1,8 @@
-import { UserColumn, columns } from "@/app/(dashboard)/users/components/column";
 import { DataTable } from "@/components/ui/data-table";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import { UserColumn, columns } from "./column";
 
 interface UsersClientProps {
   data: UserColumn[];

@@ -1,6 +1,7 @@
 import BaseNavbar from "@/components/layouts/base-navbar";
+import Footer from "@/components/layouts/footer";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -8,7 +9,8 @@ export default function DashboardLayout({
   return (
     <>
       <BaseNavbar />
-      <main className="mt-16">{children}</main>
+      <main className="mt-16 min-h-screen">{children}</main>
+      <Footer />
     </>
   );
 }

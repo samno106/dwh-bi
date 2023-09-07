@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { API_END_POINT, TOKEN_COOKIES } from "@/constant/api-end-point";
-import { setToken } from "@/lib/get-token";
+import { setId, setToken } from "@/lib/init-token";
 
 const formSchema = z.object({
   username: z.string().min(1),
@@ -46,9 +46,9 @@ export const LoginForm = () => {
         .post(`${process.env.API_URL + "" + API_END_POINT.AUTH}`, values)
         .then(({ data }) => {
           if (data.status.code == 200) {
-            console.log(data.data.jwttoken);
             setToken(data.data.jwttoken);
-            router.push("/");
+            setId(data.data.id);
+            router.push("/dashboard");
             toast.success("You're login success.", {
               id: toastId,
             });
