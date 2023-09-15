@@ -20,7 +20,6 @@ model departments {
   users      users[]   @relation("departmentUser")
   created_at DateTime? @default(now())
   updated_at DateTime? @updatedAt
-  reports    reports[] @relation("departmentReport")
 }
 
 model positions {
@@ -41,6 +40,7 @@ model roles {
   created_at DateTime? @default(now())
   updated_at DateTime? @updatedAt
   users      users[]   @relation("roleUser")
+  reports    reports[] @relation("roleReport")
 }
 
 model users {
@@ -67,14 +67,45 @@ model users {
 }
 
 model reports {
-  id            String      @id() @default(uuid())
-  name          String
-  code          String
-  status        Boolean     @default(false)
-  department    departments @relation("departmentReport", fields: [department_id], references: [id])
-  department_id String
-  created_at    DateTime?   @default(now())
-  updated_at    DateTime?   @updatedAt
+  id         String          @id() @default(uuid())
+  name       String
+  code       String?
+  status     Boolean         @default(false)
+  role       roles           @relation("roleReport", fields: [role_id], references: [id])
+  role_id    String
+  columns    reportColumns[] @relation("columnsReport")
+  params     reportParams[]  @relation("paramsReport")
+  created_at DateTime?       @default(now())
+  updated_at DateTime?       @updatedAt
 
-  @@index([department_id])
+  @@index([role_id])
+}
+
+model reportColumns {
+  id         String    @id() @default(uuid())
+  display    String
+  name       String
+  type       String
+  status     Boolean   @default(false)
+  report     reports   @relation("columnsReport", fields: [report_id], references: [id])
+  report_id  String
+  ordering   BigInt?   @default(0)
+  created_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
+
+  @@index([report_id])
+}
+
+model reportParams {
+  id         String    @id() @default(uuid())
+  display    String
+  name       String
+  type       String
+  status     Boolean   @default(false)
+  report     reports   @relation("paramsReport", fields: [report_id], references: [id])
+  report_id  String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
+
+  @@index([report_id])
 }

@@ -64,6 +64,7 @@ export const CreateRoleModal = () => {
       description=""
       isOpen={roleModal.isOpen}
       onClose={roleModal.onClose}
+      size="w-[500px]"
     >
       <div>
         <div className="space-y-4 py-2 pb-2">

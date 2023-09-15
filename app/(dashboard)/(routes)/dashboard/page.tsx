@@ -1,5 +1,3 @@
-import { initialProfile } from "@/lib/init-profile";
-
 const DashboardPage = async () => {
   return (
     <>

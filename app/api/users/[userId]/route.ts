@@ -1,3 +1,4 @@
+import { reports } from "@prisma/client";
 import prismadb from "@/lib/prismadb";
 
 export async function PATCH(
@@ -83,6 +84,40 @@ export async function DELETE(
     return Response.json(users);
   } catch (error) {
     console.log("[USER_DELETE]", error);
+    return new Response("Internal error", { status: 500 });
+  }
+}
+
+export async function GET(
+  req: Request,
+  {
+    params,
+  }: {
+    params: { userId: string };
+  }
+) {
+  try {
+    if (!params.userId) {
+      return new Response("User id is required", { status: 400 });
+    }
+
+    const user = await prismadb.users.findUnique({
+      include: {
+        department: true,
+        position: true,
+        role: {
+          include: {
+            reports: true,
+          },
+        },
+      },
+      where: {
+        id: params.userId,
+      },
+    });
+    return Response.json(user);
+  } catch (error) {
+    console.log("[USER_GET_BY_ID]", error);
     return new Response("Internal error", { status: 500 });
   }
 }

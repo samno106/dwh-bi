@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { RoleColumn } from "@/app/(dashboard)/roles/components/columns";
+import { RoleColumn } from "@/app/(dashboard)/(routes)/roles/components/columns";
 
 interface UpdateRoleModalProps {
   isOpen: boolean;
@@ -67,7 +67,7 @@ export const UpdateRoleModal: React.FC<UpdateRoleModalProps> = ({
   };
 
   return (
-    <Modal title="Udpate Role" description="" isOpen={isOpen} onClose={onClose}>
+    <Modal title="Udpate Role" description="" isOpen={isOpen} onClose={onClose} size="w-[500px]">
       <div>
         <div className="space-y-4 py-2 pb-2">
           <Form {...form}>

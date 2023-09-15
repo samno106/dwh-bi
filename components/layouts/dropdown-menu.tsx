@@ -3,6 +3,7 @@
 import {
   BadgePercent,
   BarChart,
+  BarChart3,
   BarChartBig,
   BarChartHorizontalBig,
   Briefcase,
@@ -29,33 +30,17 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
-import { useRef } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { reports } from "@prisma/client";
 
-export function DropdownMenu({ ...props }: React.HTMLAttributes<HTMLElement>) {
+interface DropdownMenuProps {
+  reportLists: reports[];
+}
+
+export const DropdownMenu: React.FC<DropdownMenuProps> = ({ reportLists }) => {
   const pathname = usePathname();
-
-  const ref = useRef(null);
-
-  const reportRoutes = [
-    {
-      href: "/customers",
-      label: "Customers",
-      icon: <Users2 className="w-4 h-4 mr-2" />,
-      active: pathname === "/customers",
-    },
-    {
-      href: "/mini-loan-grid",
-      label: "Mini Loan Grid",
-      icon: <BarChart className="w-4 h-4 mr-2" />,
-      active: pathname === "/mini-loan-grid",
-    },
-    {
-      href: "/past-due-grid",
-      label: "Past Due Grid",
-      icon: <BadgePercent className="w-4 h-4 mr-2" />,
-      active: pathname === "/past-due-grid",
-    },
-  ];
 
   const generalManagRoutes = [
     {
@@ -98,10 +83,10 @@ export function DropdownMenu({ ...props }: React.HTMLAttributes<HTMLElement>) {
       active: pathname === "/roles",
     },
     {
-      href: "/report-template",
-      label: "Report Template",
+      href: "/report-tamplate",
+      label: "Report Tamplate",
       icon: <BarChartBig className="w-4 h-4 mr-2" />,
-      active: pathname === "/report-template",
+      active: pathname === "/report-tamplate",
     },
     {
       href: "/widget-template",
@@ -128,19 +113,16 @@ export function DropdownMenu({ ...props }: React.HTMLAttributes<HTMLElement>) {
               </div>
             </div>
             <ul className="mt-2">
-              {reportRoutes.map((route) => (
-                <li key={route.href}>
+              {reportLists.map((item) => (
+                <li key={item.id}>
                   <Link
-                    href={route.href}
+                    href={`/reports/${item.id}`}
                     className={cn(
-                      " text-gray-700 px-3 py-2 my-2 text-xs hover:bg-blue-100 hover:text-blue-700 flex items-center rounded",
-                      route.active
-                        ? "bg-blue-100 text-blue-700"
-                        : "bg-white text-gray-700"
+                      " text-gray-700 px-3 py-2 my-2 text-xs hover:bg-blue-100 hover:text-blue-700 flex items-center rounded"
                     )}
                   >
-                    {route.icon}
-                    <span className="text-xs mt-1">{route.label}</span>
+                    <BarChart3 className="w-4 h-4 mr-2" />
+                    <span className="text-xs mt-1">{item.name}</span>
                   </Link>
                 </li>
               ))}
@@ -204,4 +186,4 @@ export function DropdownMenu({ ...props }: React.HTMLAttributes<HTMLElement>) {
       </PopoverContent>
     </Popover>
   );
-}
+};

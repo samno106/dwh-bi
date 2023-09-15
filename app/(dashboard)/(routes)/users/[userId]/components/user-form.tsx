@@ -74,25 +74,31 @@ export const UserForm: React.FC<UserFormProps> = ({
   });
 
   const onSubmit = async (values: UserFormValues) => {
-    setLoading(true);
+    const toastId = toast.loading("Loading...");
+
     try {
+      setLoading(true);
       if (initailData) {
         await axios.patch(`/api/users/${params.userId}`, values);
-        router.refresh();
         router.push("/users");
-        toast.success(toasMessage);
+        toast.success(toasMessage, {
+          id: toastId,
+        });
       } else {
         values.password = getHash(values.password);
         await axios.post("/api/users", values);
-        router.refresh();
         values.department_id = "0";
         values.position_id = "0";
         values.role_id = "0";
         form.reset();
-        toast.success(toasMessage);
+        toast.success(toasMessage, {
+          id: toastId,
+        });
       }
     } catch (error) {
-      toast.error("Internal server erorr.");
+      toast.success("Internal server erorr.", {
+        id: toastId,
+      });
     } finally {
       setLoading(false);
     }

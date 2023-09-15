@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
-import { DepartmentColumn } from "@/app/(dashboard)/departments/components/columns";
 import { useRouter } from "next/navigation";
+import { DepartmentColumn } from "@/app/(dashboard)/(routes)/departments/components/columns";
 
 interface UpdateDepartmentModalProps {
   isOpen: boolean;
@@ -74,6 +74,7 @@ export const UpdateDepartmentModal: React.FC<UpdateDepartmentModalProps> = ({
       description=""
       isOpen={isOpen}
       onClose={onClose}
+      size="w-[500px]"
     >
       <div>
         <div className="space-y-4 py-2 pb-2">

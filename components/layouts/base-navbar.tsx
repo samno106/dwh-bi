@@ -17,7 +17,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { DropdownMenu } from "./dropdown-menu";
-import { API_END_POINT, TOKEN_COOKIES } from "@/constant/api-end-point";
+import { TOKEN_COOKIES } from "@/constant/api-end-point";
 import React, { useEffect, useState } from "react";
 import { getToken, removeToken } from "@/lib/init-token";
 import axios from "axios";
@@ -31,20 +31,8 @@ export const BaseNavbar = () => {
   const [user, setUser] = useState({
     id: "",
     full_name: "",
-    department: {
-      id: "",
-      name: "",
-      code: "",
-    },
-    position: {
-      id: "",
-      name: "",
-      code: "",
-    },
     role: {
-      id: "",
-      name: "",
-      code: "",
+      reports: [],
     },
   });
 
@@ -73,23 +61,15 @@ export const BaseNavbar = () => {
 
   const getProfile = async () => {
     try {
+      const userId = getToken(TOKEN_COOKIES.AUTH_ID);
       const token = getToken(TOKEN_COOKIES.TOKEN_NAME);
-      await axios
-        .post(
-          `${process.env.API_URL + "" + API_END_POINT.PROFILE}`,
-          {},
-          {
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
-        .then(({ data }) => {
-          setUser(data.data);
-        });
-    } catch (error) {}
+      console.log(token);
+      await axios.get(`/api/users/${userId}`).then((data) => {
+        setUser(data.data);
+      });
+    } catch (error) {
+      toast.error("Internal server erorr !");
+    }
   };
 
   useEffect(() => {
@@ -167,7 +147,7 @@ export const BaseNavbar = () => {
               </li>
             ))}
             <li className="mx-5">
-              <DropdownMenu />
+              <DropdownMenu reportLists={user.role.reports} />
             </li>
           </ul>
         </div>

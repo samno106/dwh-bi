@@ -24,10 +24,10 @@ export const DepartmentClient: React.FC<DepartmentClientProps> = ({ data }) => {
         <Button
           type="button"
           onClick={() => departmentModal.onOpen()}
-          className="shadow-none flex items-center cursor-pointer rounded-md py-2 px-3 "
+          className="shadow-none flex items-center cursor-pointer rounded-md py-1.5 px-3 "
         >
-          <Plus className="w-4 h-4 mr-2" />
-          <span className="uppercase text-xs">Add New</span>
+          <Plus className="w-3 h-3 mr-1.5" />
+          <span className="uppercase text-[9px]">Add New</span>
         </Button>
       </div>
 

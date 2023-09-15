@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { CellAction } from "./cell-action"
+import { ColumnDef } from "@tanstack/react-table";
+import { CellAction } from "./cell-action";
+import { CellStatus } from "./cell-status";
 
 export type UserColumn = {
-  id: string
-  full_name: string
-  staff_id: string
-  username: string
-  department: string
-  position: string
-  role: string
-  status: false | true
-  
-}
+  id: string;
+  full_name: string;
+  staff_id: string;
+  username: string;
+  department: string;
+  position: string;
+  role: string;
+  status: false | true;
+};
 
 export const columns: ColumnDef<UserColumn>[] = [
   {
-    id:"key",
-    header:"#",
-    cell:({row})=><span>{row.index+1}</span>
+    id: "key",
+    header: "#",
+    cell: ({ row }) => <span>{row.index + 1}</span>,
   },
   {
     accessorKey: "full_name",
@@ -46,13 +46,13 @@ export const columns: ColumnDef<UserColumn>[] = [
     header: "Role",
   },
   {
-    accessorKey: "status",
+    id: "status",
     header: "Status",
-    cell:({row})=>{ row.original.status === false?<span className="p-1 px-2 rounded bg-blue-500">Active</span>:<span className="p-1 px-2 rounded bg-blue-500">Active</span>}
+    cell: ({ row }) => <CellStatus data={row.original} />,
   },
   {
-    id:"action",
+    id: "action",
     header: "Action",
-    cell:({row})=><CellAction data={row.original}/>
-  }
-]
+    cell: ({ row }) => <CellAction data={row.original} />,
+  },
+];

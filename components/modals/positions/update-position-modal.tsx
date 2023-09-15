@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { PositionColumn } from "@/app/(dashboard)/positions/components/columns";
+import { PositionColumn } from "@/app/(dashboard)/(routes)/positions/components/columns";
 
 interface UpdatePositionModalProps {
   isOpen: boolean;
@@ -72,6 +72,7 @@ export const UpdatePositionModal: React.FC<UpdatePositionModalProps> = ({
       description=""
       isOpen={isOpen}
       onClose={onClose}
+      size="w-[500px]"
     >
       <div>
         <div className="space-y-4 py-2 pb-2">
