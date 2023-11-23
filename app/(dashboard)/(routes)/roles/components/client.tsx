@@ -2,16 +2,31 @@
 
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { RoleColumn, columns } from "./columns";
 import { DataTable } from "@/components/ui/data-table";
 import { useRoleModal } from "@/hooks/use-role-modal";
+import axios from "axios";
 
-interface RoleClientProps {
-  data: RoleColumn[];
-}
-export const RoleClient: React.FC<RoleClientProps> = ({ data }) => {
+export const RoleClient = () => {
   const roleModal = useRoleModal();
+  const [dataFormat, setDataFormat] = useState<RoleColumn[]>([]);
+
+  const getData = async () => {
+    await axios.get("/api/roles").then((data) => {
+      const formattedRoles: RoleColumn[] = data.data.map((item: any) => ({
+        id: item.id,
+        name: item.name,
+        code: item.code,
+        status: item.status,
+      }));
+      setDataFormat(formattedRoles);
+    });
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <div>
@@ -30,7 +45,7 @@ export const RoleClient: React.FC<RoleClientProps> = ({ data }) => {
 
       <div className="bg-white px-4 rounded-lg mt-5">
         <div className="overflow-x-auto">
-          <DataTable columns={columns} data={data} searchKey="name" />
+          <DataTable columns={columns} data={dataFormat} searchKey="name" />
         </div>
       </div>
     </div>

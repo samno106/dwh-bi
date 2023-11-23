@@ -25,6 +25,7 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { getHash } from "@/lib/hash-password";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const formSchema = z.object({
   full_name: z.string().min(1),
@@ -200,12 +201,14 @@ export const UserForm: React.FC<UserFormProps> = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="0">Select Department</SelectItem>
-                        {departments.map((item) => (
-                          <SelectItem key={item.id} value={item.id}>
-                            {item.name}
-                          </SelectItem>
-                        ))}
+                        <ScrollArea className="h-[250px]">
+                          <SelectItem value="0">Select Department</SelectItem>
+                          {departments.map((item) => (
+                            <SelectItem key={item.id} value={item.id}>
+                              {item.name}
+                            </SelectItem>
+                          ))}
+                        </ScrollArea>
                       </SelectContent>
                     </Select>
 
@@ -232,12 +235,14 @@ export const UserForm: React.FC<UserFormProps> = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="0">Select Position</SelectItem>
-                        {positions.map((item) => (
-                          <SelectItem key={item.id} value={item.id}>
-                            {item.name}
-                          </SelectItem>
-                        ))}
+                        <ScrollArea className="h-[250px]">
+                          <SelectItem value="0">Select Position</SelectItem>
+                          {positions.map((item) => (
+                            <SelectItem key={item.id} value={item.id}>
+                              {item.name}
+                            </SelectItem>
+                          ))}
+                        </ScrollArea>
                       </SelectContent>
                     </Select>
 
@@ -264,13 +269,15 @@ export const UserForm: React.FC<UserFormProps> = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="0">Select Role</SelectItem>
+                        <ScrollArea className="h-[250px]">
+                          <SelectItem value="0">Select Role</SelectItem>
 
-                        {roles.map((item) => (
-                          <SelectItem key={item.id} value={item.id}>
-                            {item.name}
-                          </SelectItem>
-                        ))}
+                          {roles.map((item) => (
+                            <SelectItem key={item.id} value={item.id}>
+                              {item.name}
+                            </SelectItem>
+                          ))}
+                        </ScrollArea>
                       </SelectContent>
                     </Select>
 

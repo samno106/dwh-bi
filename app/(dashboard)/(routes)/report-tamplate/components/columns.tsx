@@ -3,13 +3,14 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { CellAction } from "./cell-action";
 import { CellStatus } from "./cell-status";
+import { CellMis } from "./cell-mis";
 
 export type ReportColumn = {
   id: string;
   name: string;
   status: false | true;
-  role_id: string;
-  role: string;
+  mis: false | true;
+  category: string;
 };
 
 export const columns: ColumnDef<ReportColumn>[] = [
@@ -22,15 +23,19 @@ export const columns: ColumnDef<ReportColumn>[] = [
     accessorKey: "name",
     header: "Name",
   },
-
   {
-    accessorKey: "role",
-    header: "Role",
+    accessorKey: "category",
+    header: "Category",
   },
   {
     id: "status",
     header: "Status",
     cell: ({ row }) => <CellStatus data={row.original} />,
+  },
+  {
+    id: "mis",
+    header: "MIS",
+    cell: ({ row }) => <CellMis data={row.original} />,
   },
   {
     id: "action",

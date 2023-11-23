@@ -42,13 +42,19 @@ export const LoginForm = () => {
     const toastId = toast.loading("Loading...");
     try {
       setLoading(true);
+      values.username = values.username.replaceAll(" ", "").toLowerCase();
       await axios
         .post(`${process.env.API_URL + "" + API_END_POINT.AUTH}`, values)
         .then(({ data }) => {
           if (data.status.code == 200) {
             setToken(data.data.jwttoken);
             setId(data.data.id);
-            router.push("/dashboard");
+            if (data.data.department_id != "null") {
+              router.push("/");
+            } else {
+              router.push("/personal-info");
+            }
+
             toast.success("You're login success.", {
               id: toastId,
             });

@@ -26,6 +26,7 @@ export async function PATCH(
         code,
       },
     });
+    await prismadb.$disconnect();
     return Response.json(report);
   } catch (error) {
     console.log("[REPORT_PATCH]", error);

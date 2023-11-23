@@ -47,6 +47,7 @@ export async function POST(req: Request) {
         role_id,
       },
     });
+    await prismadb.$disconnect();
     return Response.json(positions);
   } catch (error) {
     console.log("[USER_POST]", error);
@@ -66,6 +67,7 @@ export async function GET(req: Request) {
         created_at: "desc",
       },
     });
+    await prismadb.$disconnect();
     return Response.json(users);
   } catch (error) {
     console.log("[USER_GET]", error);

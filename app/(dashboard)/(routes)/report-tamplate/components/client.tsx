@@ -3,24 +3,40 @@
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { Plus } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ReportColumn, columns } from "./columns";
 import { useReportModal } from "@/hooks/use-report-modal";
-import { reports } from "@prisma/client";
+import axios from "axios";
 
-interface ReportTamplateClientProps {
-  data: ReportColumn[];
-}
-
-export const ReportTamplateClient: React.FC<ReportTamplateClientProps> = ({
-  data,
-}) => {
+export const ReportTamplateClient = () => {
   const reportModal = useReportModal();
+  const [dataFormate, setDataFormate] = useState<ReportColumn[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const getData = async () => {
+    setLoading(true);
+    await axios.get("/api/reports").then((data) => {
+      const formattedReports: ReportColumn[] = data.data.map((item: any) => ({
+        id: item.id,
+        name: item.name,
+        code: item.code,
+        status: item.status,
+        mis: item.mis,
+        category: item.category ?? "",
+      }));
+      setDataFormate(formattedReports);
+      setLoading(false);
+    });
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <div>
       <div className="flex justify-between items-center">
-        <h1 className="text-sm font-semibold text-gray-700">Report Tamplate</h1>
+        <h1 className="text-sm font-semibold text-gray-700">Report Template</h1>
 
         <Button
           type="button"
@@ -34,7 +50,7 @@ export const ReportTamplateClient: React.FC<ReportTamplateClientProps> = ({
 
       <div className="bg-white px-4 rounded-lg mt-5">
         <div className="overflow-x-auto">
-          <DataTable columns={columns} data={data} searchKey="name" />
+          <DataTable columns={columns} data={dataFormate} searchKey="name" />
         </div>
       </div>
     </div>

@@ -19,6 +19,7 @@ export async function POST(req: Request) {
         code,
       },
     });
+    await prismadb.$disconnect();
     return Response.json(positions);
   } catch (error) {
     console.log("[ROLE_POST]", error);
@@ -33,6 +34,7 @@ export async function GET(req: Request) {
         created_at: "desc",
       },
     });
+    await prismadb.$disconnect();
     return Response.json(roles);
   } catch (error) {
     console.log("[ROLE_GET]", error);

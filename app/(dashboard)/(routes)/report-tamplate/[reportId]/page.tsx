@@ -8,41 +8,47 @@ export const ReportTamplatePage = async ({
     reportId: string;
   };
 }) => {
-  const report = await prismadb.reports.findUnique({
+  const report = await prismadb.reports.findFirst({
     include: {
-      role: true,
+      reportRole: true,
     },
     where: {
       id: params.reportId,
     },
   });
 
-  const role = await prismadb.roles.findUnique({
-    where: {
-      id: report?.role_id,
+  const reportRoles = await prismadb.reportRoles.findMany({
+    include: {
+      report: true,
+      role: true,
     },
-  });
-
-  const reportColumns = await prismadb.reportColumns.findMany({
-    where: {
-      report_id: params.reportId,
-    },
-    orderBy: {
-      ordering: "asc",
-    },
-  });
-
-  const reportParams = await prismadb.reportParams.findMany({
     where: {
       report_id: params.reportId,
     },
   });
+
+  const roles = await prismadb.roles.findMany();
+
+  const reportColumns =
+    (await prismadb.reportColumns.findMany({
+      orderBy: {
+        ordering: "asc",
+      },
+    })) || [];
+
+  const reportParams =
+    (await prismadb.reportParams.findMany({
+      where: {
+        report_id: params.reportId,
+      },
+    })) || [];
 
   return (
     <div className="px-10 py-10 min-h-screen">
       <FieldClient
         report={report}
-        role={role}
+        reportRoles={reportRoles}
+        roles={roles}
         reportColumns={reportColumns}
         reportParams={reportParams}
       />

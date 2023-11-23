@@ -1,4 +1,3 @@
-import { reports } from "@prisma/client";
 import prismadb from "@/lib/prismadb";
 
 export async function PATCH(
@@ -56,6 +55,7 @@ export async function PATCH(
         role_id,
       },
     });
+    await prismadb.$disconnect();
     return Response.json(users);
   } catch (error) {
     console.log("[USER_PATCH]", error);
@@ -81,6 +81,7 @@ export async function DELETE(
         id: params.userId,
       },
     });
+    await prismadb.$disconnect();
     return Response.json(users);
   } catch (error) {
     console.log("[USER_DELETE]", error);
@@ -107,7 +108,7 @@ export async function GET(
         position: true,
         role: {
           include: {
-            reports: true,
+            reportRole: true,
           },
         },
       },
@@ -115,6 +116,7 @@ export async function GET(
         id: params.userId,
       },
     });
+    await prismadb.$disconnect();
     return Response.json(user);
   } catch (error) {
     console.log("[USER_GET_BY_ID]", error);

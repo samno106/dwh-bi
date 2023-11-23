@@ -19,6 +19,14 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { DepartmentColumn } from "@/app/(dashboard)/(routes)/departments/components/columns";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 interface UpdateDepartmentModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -29,6 +37,7 @@ const formSchema = z.object({
   name: z.string().min(1),
   short_name: z.string().min(1),
   code: z.string().min(1),
+  type: z.string(),
 });
 
 export const UpdateDepartmentModal: React.FC<UpdateDepartmentModalProps> = ({
@@ -46,6 +55,7 @@ export const UpdateDepartmentModal: React.FC<UpdateDepartmentModalProps> = ({
       name: data.name,
       short_name: data.short_name,
       code: data.code,
+      type: data.type ?? "",
     },
   });
 
@@ -130,6 +140,31 @@ export const UpdateDepartmentModal: React.FC<UpdateDepartmentModalProps> = ({
                         className="shadow-none py-5 rounded"
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem className="mb-5">
+                    <FormLabel className="text-xs">Type</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="HO">HO</SelectItem>
+                        <SelectItem value="Branch">Branch</SelectItem>
+                      </SelectContent>
+                    </Select>
+
                     <FormMessage />
                   </FormItem>
                 )}

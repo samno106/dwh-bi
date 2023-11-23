@@ -16,6 +16,7 @@ export async function DELETE(
         id: params.columnId,
       },
     });
+    await prismadb.$disconnect();
     return Response.json(reportColumns);
   } catch (error) {
     console.log("[REPORT_COLUMN_DELETE]", error);

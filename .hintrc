@@ -18,7 +18,8 @@
           "@layer"
         ]
       }
-    ]
+    ],
+    "axe/name-role-value": "off"
   },
   "browserslist": [
     "defaults",

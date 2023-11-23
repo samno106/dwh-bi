@@ -13,7 +13,7 @@ export function middleware(request: NextRequest, response: NextResponse) {
   }
 
   if (request.url.includes("/login") && auth) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return NextResponse.next();

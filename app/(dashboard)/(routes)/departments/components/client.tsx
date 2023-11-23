@@ -6,13 +6,33 @@ import { ChevronRight, Home, Plus } from "lucide-react";
 import Link from "next/link";
 import { DepartmentColumn, columns } from "./columns";
 import { DataTable } from "@/components/ui/data-table";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-interface DepartmentClientProps {
-  data: DepartmentColumn[];
-}
-
-export const DepartmentClient: React.FC<DepartmentClientProps> = ({ data }) => {
+export const DepartmentClient = () => {
   const departmentModal = useDepartmentModal();
+
+  const [dataFormat, setDataFormat] = useState<DepartmentColumn[]>([]);
+
+  const getData = async () => {
+    await axios.get("/api/departments").then((data) => {
+      const formattedDepartments: DepartmentColumn[] = data.data.map(
+        (item: any) => ({
+          id: item.id,
+          name: item.name,
+          short_name: item.short_name,
+          code: item.code,
+          status: item.status,
+          type: item.type,
+        })
+      );
+      setDataFormat(formattedDepartments);
+    });
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <div>
@@ -33,7 +53,7 @@ export const DepartmentClient: React.FC<DepartmentClientProps> = ({ data }) => {
 
       <div className="bg-white px-4 rounded-lg mt-5">
         <div className="overflow-x-auto">
-          <DataTable columns={columns} data={data} searchKey="name" />
+          <DataTable columns={columns} data={dataFormat} searchKey="name" />
         </div>
       </div>
     </div>

@@ -2,15 +2,14 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Pencil, Plus, Trash } from "lucide-react";
-import { UpdateDepartmentModal } from "@/components/modals/departments/update-department-modal";
+import { Pencil, Plus, Search, Trash } from "lucide-react";
 import { AlertModal } from "@/components/modals/alert-modal";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { UpdateRoleModal } from "@/components/modals/roles/update-role-modal";
 import { UpdateReportModal } from "@/components/modals/reports/update-report-modal";
 import { ReportColumn } from "./columns";
+import Link from "next/link";
 
 interface CellActionProps {
   data: ReportColumn;
@@ -33,6 +32,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       setLoading(true);
       await axios.delete(`/api/reports/${data.id}`);
       router.refresh();
+
       toast.success("Reports deleted.");
     } catch (error) {
       toast.error("Something went wrong.");
@@ -52,6 +52,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       />
       <UpdateReportModal isOpen={open} onClose={onClose} data={data} />
       <div className="flex">
+        <Link
+          href={`/reports/${data.id}`}
+          target="_blank"
+          className="flex justify-center items-center text-gray-600 w-7 h-7 shadow-none rounded-md bg-gray-200 hover:bg-gray-300 hover:text-yellow-500 mr-3"
+        >
+          <Search className="w-4 h-4" />
+        </Link>
         <Button
           size="icon"
           onClick={() => router.push(`/report-tamplate/${data.id}`)}

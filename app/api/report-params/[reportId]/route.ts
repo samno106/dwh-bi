@@ -34,6 +34,7 @@ export async function POST(
         report_id,
       },
     });
+    await prismadb.$disconnect();
     return Response.json(reportParams);
   } catch (error) {
     console.log("[REPORT_PARAMS_POST]", error);
@@ -60,6 +61,7 @@ export async function GET(
         created_at: "desc",
       },
     });
+    await prismadb.$disconnect();
     return Response.json(reportParams);
   } catch (error) {
     console.log("[REPORT_PARAMS_GET]", error);

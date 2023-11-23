@@ -51,7 +51,31 @@
 }
 body{
   background: rgb(241 245 249);
-} 
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 8px !important;
+  height: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #e9edf2;
+  border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #cbd4df;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #cfd9e4;
+}
+
 
 /* @layer base {
   :root {

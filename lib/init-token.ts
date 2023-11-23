@@ -47,5 +47,5 @@ export function setId(payload: string) {
 export function removeToken(payload: string, authId: string) {
   const cookies = new Cookies();
   cookies.remove(authId);
-  return cookies.remove(payload);
+  cookies.remove(payload);
 }

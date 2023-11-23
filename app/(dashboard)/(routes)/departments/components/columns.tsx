@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { CellAction } from "./cell-action"
+import { ColumnDef } from "@tanstack/react-table";
+import { CellAction } from "./cell-action";
 
 export type DepartmentColumn = {
-  id: string
-  name: string
-  short_name: string
-  code: string
-  status: false | true
-  
-}
+  id: string;
+  name: string;
+  short_name: string;
+  code: string;
+  status: false | true;
+  type: string | null;
+};
 
 export const columns: ColumnDef<DepartmentColumn>[] = [
   {
-    id:"key",
-    header:"#",
-    cell:({row})=><span>{row.index+1}</span>
+    id: "key",
+    header: "#",
+    cell: ({ row }) => <span>{row.index + 1}</span>,
   },
   {
     accessorKey: "name",
@@ -31,12 +31,22 @@ export const columns: ColumnDef<DepartmentColumn>[] = [
     header: "Code",
   },
   {
-    accessorKey: "status",
-    header: "Status",
+    accessorKey: "type",
+    header: "Type",
+    cell: ({ row }) =>
+      row.original.type === "HO" ? (
+        <span className="py-1 px-2 rounded-md bg-blue-200 text-blue-600 text-[10px]">
+          HO
+        </span>
+      ) : (
+        <span className="py-1 px-2 rounded-md bg-green-200 text-green-600 text-[10px]">
+          Branch
+        </span>
+      ),
   },
   {
-    id:"action",
+    id: "action",
     header: "Action",
-    cell:({row})=><CellAction data={row.original}/>
-  }
-]
+    cell: ({ row }) => <CellAction data={row.original} />,
+  },
+];

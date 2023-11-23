@@ -1,14 +1,37 @@
+"use client";
+
 import { DataTable } from "@/components/ui/data-table";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { UserColumn, columns } from "./column";
+import { users } from "@prisma/client";
+import axios from "axios";
 
-interface UsersClientProps {
-  data: UserColumn[];
-}
+export const UsersClient = () => {
+  const [users, setUsers] = useState<UserColumn[]>([]);
 
-export const UsersClient: React.FC<UsersClientProps> = ({ data }) => {
+  const getUsers = async () => {
+    await axios.get("/api/users").then((data) => {
+      const formattedUsers: UserColumn[] = data.data.map((item: any) => ({
+        id: item.id,
+        full_name: item.full_name,
+        staff_id: item.staff_id ?? "N/A",
+        username: item.username,
+        department: item.department?.name ?? "N/A",
+        position: item.position?.name ?? "N/A",
+        role: item.role?.name ?? "N/A",
+        status: item.status,
+      }));
+
+      setUsers(formattedUsers);
+    });
+  };
+
+  useEffect(() => {
+    getUsers();
+  }, []);
+
   return (
     <div>
       <div className="flex justify-between items-center">
@@ -27,7 +50,7 @@ export const UsersClient: React.FC<UsersClientProps> = ({ data }) => {
 
       <div className="bg-white px-4 rounded-lg mt-5">
         <div className="overflow-x-auto">
-          <DataTable columns={columns} data={data} searchKey="full_name" />
+          <DataTable columns={columns} data={users} searchKey="full_name" />
         </div>
       </div>
     </div>

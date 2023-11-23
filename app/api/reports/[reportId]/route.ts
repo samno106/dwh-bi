@@ -12,14 +12,10 @@ export async function PATCH(
 ) {
   try {
     const body = await req.json();
-    const { name, role_id } = body;
+    const { name, category } = body;
 
     if (!name) {
       return new Response("Name is required", { status: 400 });
-    }
-
-    if (!role_id) {
-      return new Response("Role is required", { status: 400 });
     }
 
     const report = await prismadb.reports.updateMany({
@@ -28,9 +24,10 @@ export async function PATCH(
       },
       data: {
         name,
-        role_id,
+        category,
       },
     });
+    await prismadb.$disconnect();
     return Response.json(report);
   } catch (error) {
     console.log("[REPORT_PATCH]", error);
@@ -54,6 +51,7 @@ export async function DELETE(
         id: params.reportId,
       },
     });
+    await prismadb.$disconnect();
     return Response.json(report);
   } catch (error) {
     console.log("[REPORT_DELETE]", error);

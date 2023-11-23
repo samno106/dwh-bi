@@ -25,10 +25,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const formSchema = z.object({
   name: z.string().min(1),
-  role_id: z.string().min(2),
+  category: z.string().min(1),
 });
 
 export const CreateReportModal = () => {
@@ -44,6 +45,15 @@ export const CreateReportModal = () => {
     },
   ]);
 
+  const [categories, setCategories] = useState([
+    {
+      id: "",
+      type: "",
+      label: "",
+      value: "",
+    },
+  ]);
+
   const getRoles = async () => {
     try {
       await axios.get("/api/roles").then((data) => {
@@ -52,11 +62,19 @@ export const CreateReportModal = () => {
     } catch (error) {}
   };
 
+  const getGategory = async () => {
+    try {
+      await axios.get("/api/metadatas/query").then((data) => {
+        setCategories(data.data);
+      });
+    } catch (error) {}
+  };
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      role_id: "0",
+      category: "0",
     },
   });
 
@@ -85,6 +103,7 @@ export const CreateReportModal = () => {
 
   useEffect(() => {
     getRoles();
+    getGategory();
   }, []);
 
   return (
@@ -120,29 +139,31 @@ export const CreateReportModal = () => {
 
               <FormField
                 control={form.control}
-                name="role_id"
+                name="category"
                 render={({ field }) => (
                   <FormItem className="mb-5">
-                    <FormLabel className="text-[11px]">Assign Role</FormLabel>
+                    <FormLabel className="text-[11px]">Category </FormLabel>
                     <Select
-                      name="role_id"
+                      name="category"
                       disabled={loading}
                       onValueChange={field.onChange}
                       value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger className="w-full shadow-none rounded py-5 text-xs">
-                          <SelectValue placeholder="Select Role" />
+                          <SelectValue placeholder="Select Category" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="0">Select Role</SelectItem>
+                        <ScrollArea className="h-[250px]">
+                          <SelectItem value="0">Select category</SelectItem>
 
-                        {roles.map((item) => (
-                          <SelectItem key={item.id} value={item.id}>
-                            {item.name}
-                          </SelectItem>
-                        ))}
+                          {categories.map((item) => (
+                            <SelectItem key={item.id} value={item.value}>
+                              {item.label}
+                            </SelectItem>
+                          ))}
+                        </ScrollArea>
                       </SelectContent>
                     </Select>
 
@@ -150,6 +171,7 @@ export const CreateReportModal = () => {
                   </FormItem>
                 )}
               />
+
               <div className="space-x-2 pt-6 flex items-center justify-end">
                 <Button
                   type="button"

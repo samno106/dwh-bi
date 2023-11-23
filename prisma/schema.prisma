@@ -2,7 +2,10 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider             = "prisma-client-js"
+  // binaryTargets = ["native", "debian-openssl-1.1.x", "debian-openssl-3.0.x", "linux-musl", "linux-musl-openssl-3.0.x"]
+  previewFeatures      = ["referentialActions"]
+  referentialIntegrity = "prisma"
 }
 
 datasource db {
@@ -17,6 +20,7 @@ model departments {
   short_name String
   code       String
   status     Boolean   @default(false)
+  type       String?
   users      users[]   @relation("departmentUser")
   created_at DateTime? @default(now())
   updated_at DateTime? @updatedAt
@@ -33,33 +37,34 @@ model positions {
 }
 
 model roles {
-  id         String    @id() @default(uuid())
-  name       String
-  code       String
-  status     Boolean   @default(false)
-  created_at DateTime? @default(now())
-  updated_at DateTime? @updatedAt
-  users      users[]   @relation("roleUser")
-  reports    reports[] @relation("roleReport")
+  id          String        @id() @default(uuid())
+  name        String
+  code        String
+  status      Boolean       @default(false)
+  created_at  DateTime?     @default(now())
+  updated_at  DateTime?     @updatedAt
+  users       users[]       @relation("roleUser")
+  reportRole  reportRoles[] @relation("reportRole")
+  widgetRoles widgetRoles[] @relation("widgetRole")
 }
 
 model users {
-  id                  String      @id() @default(uuid())
-  full_name           String
-  staff_id            String      @unique
-  username            String      @unique
-  password            String
+  id                  String       @id() @default(uuid())
+  full_name           String?
+  staff_id            String?      @unique
+  username            String?      @unique
+  password            String?
   password_expired    DateTime?
   password_reseted_at DateTime?
-  status              Boolean     @default(false)
-  department          departments @relation("departmentUser", fields: [department_id], references: [id])
-  position            positions   @relation("positionUser", fields: [position_id], references: [id])
-  role                roles       @relation("roleUser", fields: [role_id], references: [id])
-  department_id       String
-  position_id         String
-  role_id             String
-  created_at          DateTime?   @default(now())
-  updated_at          DateTime?   @updatedAt
+  status              Boolean      @default(false)
+  department          departments? @relation("departmentUser", fields: [department_id], references: [id], onDelete: Cascade)
+  position            positions?   @relation("positionUser", fields: [position_id], references: [id], onDelete: Cascade)
+  role                roles?       @relation("roleUser", fields: [role_id], references: [id], onDelete: Cascade)
+  department_id       String?
+  position_id         String?
+  role_id             String?
+  created_at          DateTime?    @default(now())
+  updated_at          DateTime?    @updatedAt
 
   @@index([department_id])
   @@index([position_id])
@@ -67,33 +72,33 @@ model users {
 }
 
 model reports {
-  id         String          @id() @default(uuid())
+  id         String         @id() @default(uuid())
   name       String
   code       String?
-  status     Boolean         @default(false)
-  role       roles           @relation("roleReport", fields: [role_id], references: [id])
-  role_id    String
-  columns    reportColumns[] @relation("columnsReport")
-  params     reportParams[]  @relation("paramsReport")
-  created_at DateTime?       @default(now())
-  updated_at DateTime?       @updatedAt
+  status     Boolean        @default(false)
+  mis        Boolean        @default(false)
+  reportRole reportRoles[]  @relation("reports")
+  params     reportParams[] @relation("paramsReport")
+  category   String?
+  created_at DateTime?      @default(now())
+  updated_at DateTime?      @updatedAt
 
-  @@index([role_id])
+  // @@index([role_id])
 }
 
 model reportColumns {
-  id         String    @id() @default(uuid())
-  display    String
-  name       String
-  type       String
-  status     Boolean   @default(false)
-  report     reports   @relation("columnsReport", fields: [report_id], references: [id])
-  report_id  String
-  ordering   BigInt?   @default(0)
-  created_at DateTime? @default(now())
-  updated_at DateTime? @updatedAt
+  id             String      @id() @default(uuid())
+  display        String
+  name           String
+  type           String
+  status         Boolean     @default(false)
+  reportRole     reportRoles @relation("reportColumns", fields: [report_role_id], references: [id], onDelete: Cascade)
+  report_role_id String
+  ordering       Int         @default(0)
+  created_at     DateTime?   @default(now())
+  updated_at     DateTime?   @updatedAt
 
-  @@index([report_id])
+  @@index([report_role_id])
 }
 
 model reportParams {
@@ -102,10 +107,87 @@ model reportParams {
   name       String
   type       String
   status     Boolean   @default(false)
-  report     reports   @relation("paramsReport", fields: [report_id], references: [id])
+  report     reports   @relation("paramsReport", fields: [report_id], references: [id], onDelete: Cascade)
   report_id  String
   created_at DateTime? @default(now())
   updated_at DateTime? @updatedAt
 
   @@index([report_id])
+}
+
+model metaDatas {
+  id    String @id() @default(uuid())
+  type  String
+  label String
+  value String
+}
+
+model reportRoles {
+  id            String          @id() @default(uuid())
+  report        reports         @relation("reports", fields: [report_id], references: [id], onDelete: Cascade)
+  report_id     String
+  role          roles           @relation("reportRole", fields: [role_id], references: [id], onDelete: Cascade)
+  role_id       String
+  reportColumns reportColumns[] @relation("reportColumns")
+  created_at    DateTime?       @default(now())
+  updated_at    DateTime?       @updatedAt
+
+  @@index([report_id])
+  @@index([role_id])
+}
+
+model widgets {
+  id             String           @id() @default(uuid())
+  name           String?
+  type           String?
+  code           String?
+  position       String?
+  widgetDisplays widgetDisplays[] @relation("widgetDisplays")
+  widgetParams   widgetParams[]   @relation("widgetParams")
+  widgetRoles    widgetRoles[]    @relation("widgets")
+  created_at     DateTime?        @default(now())
+  updated_at     DateTime?        @updatedAt
+}
+
+model widgetDisplays {
+  id         String    @id() @default(uuid())
+  display    String
+  name       String
+  type       String
+  ordering   Int       @default(0)
+  status     Boolean   @default(false)
+  widget     widgets   @relation("widgetDisplays", fields: [widget_id], references: [id], onDelete: Cascade)
+  widget_id  String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
+
+  @@index([widget_id])
+}
+
+model widgetParams {
+  id         String    @id() @default(uuid())
+  display    String
+  name       String
+  type       String
+  ordering   Int       @default(0)
+  status     Boolean   @default(false)
+  widget     widgets   @relation("widgetParams", fields: [widget_id], references: [id], onDelete: Cascade)
+  widget_id  String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
+
+  @@index([widget_id])
+}
+
+model widgetRoles {
+  id         String    @id() @default(uuid())
+  widget     widgets?  @relation("widgets", fields: [widget_id], references: [id], onDelete: Cascade)
+  widget_id  String
+  role       roles?    @relation("widgetRole", fields: [role_id], references: [id])
+  role_id    String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @updatedAt
+
+  @@index([widget_id])
+  @@index([role_id])
 }

@@ -26,7 +26,7 @@ const formSchema = z.object({
   display: z.string().min(1),
   name: z.string().min(1),
   type: z.string().min(1),
-  report_id: z.string(),
+  report_role_id: z.string(),
 });
 
 export const CreateColumnModal = () => {
@@ -44,7 +44,7 @@ export const CreateColumnModal = () => {
       display: "",
       name: "",
       type: "text",
-      report_id: `${params.reportId}`,
+      report_role_id: `${modalUse.reportRoleId}`,
     },
   });
 
@@ -54,9 +54,9 @@ export const CreateColumnModal = () => {
     try {
       setLoading(true);
       values.type = type;
-      values.report_id = `${params.reportId}`;
+      values.report_role_id = `${modalUse.reportRoleId}`;
       const response = await axios.post(
-        `/api/report-columns/${params.reportId}`,
+        `/api/report-columns/${modalUse.reportRoleId}`,
         values
       );
 

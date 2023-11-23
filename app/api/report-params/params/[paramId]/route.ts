@@ -16,6 +16,7 @@ export async function DELETE(
         id: params.paramId,
       },
     });
+    await prismadb.$disconnect();
     return Response.json(reportParams);
   } catch (error) {
     console.log("[REPORT_PARAM}_DELETE]", error);

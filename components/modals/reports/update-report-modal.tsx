@@ -35,7 +35,7 @@ interface UpdateReportModalProps {
 
 const formSchema = z.object({
   name: z.string().min(1),
-  role_id: z.string().min(2),
+  category: z.string().min(1),
 });
 
 export const UpdateReportModal: React.FC<UpdateReportModalProps> = ({
@@ -53,11 +53,27 @@ export const UpdateReportModal: React.FC<UpdateReportModalProps> = ({
     },
   ]);
 
+  const [categories, setCategories] = useState([
+    {
+      id: "",
+      type: "",
+      label: "",
+      value: "",
+    },
+  ]);
+
   const getRoles = async () => {
     try {
       await axios.get("/api/roles").then((data) => {
-        console.log(data.data);
         setRoles(data.data);
+      });
+    } catch (error) {}
+  };
+
+  const getGategory = async () => {
+    try {
+      await axios.get("/api/metadatas/query").then((data) => {
+        setCategories(data.data);
       });
     } catch (error) {}
   };
@@ -66,7 +82,7 @@ export const UpdateReportModal: React.FC<UpdateReportModalProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: data.name,
-      role_id: data.role_id,
+      category: data.category,
     },
   });
 
@@ -95,6 +111,7 @@ export const UpdateReportModal: React.FC<UpdateReportModalProps> = ({
 
   useEffect(() => {
     getRoles();
+    getGategory();
   }, []);
 
   return (
@@ -127,30 +144,29 @@ export const UpdateReportModal: React.FC<UpdateReportModalProps> = ({
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
-                name="role_id"
+                name="category"
                 render={({ field }) => (
                   <FormItem className="mb-5">
-                    <FormLabel className="text-[11px]">Assign Role</FormLabel>
+                    <FormLabel className="text-[11px]">Category </FormLabel>
                     <Select
-                      name="role_id"
+                      name="category"
                       disabled={loading}
                       onValueChange={field.onChange}
                       value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger className="w-full shadow-none rounded py-5 text-xs">
-                          <SelectValue placeholder="Select Role" />
+                          <SelectValue placeholder="Select Category" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="0">Select Role</SelectItem>
+                        <SelectItem value="0">Select category</SelectItem>
 
-                        {roles.map((item) => (
-                          <SelectItem key={item.id} value={item.id}>
-                            {item.name}
+                        {categories.map((item) => (
+                          <SelectItem key={item.id} value={item.value}>
+                            {item.label}
                           </SelectItem>
                         ))}
                       </SelectContent>

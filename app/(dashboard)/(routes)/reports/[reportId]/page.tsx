@@ -8,22 +8,53 @@ const ReportPage = async ({
     reportId: string;
   };
 }) => {
-  const report = await prismadb.reports.findUnique({
+  const report = await prismadb.reports.findFirst({
+    where: {
+      id: `${params.reportId}`,
+    },
     include: {
-      columns: {
-        orderBy: {
-          ordering: "asc",
+      reportRole: {
+        include: {
+          reportColumns: {
+            orderBy: {
+              ordering: "asc",
+            },
+          },
         },
       },
       params: true,
     },
+  });
+
+  const metaBranchs = await prismadb.metaDatas.findMany({
     where: {
-      id: `${params.reportId}`,
+      type: "param_branch",
     },
   });
+  const metaCurrencies = await prismadb.metaDatas.findMany({
+    where: {
+      type: "param_ccy",
+    },
+  });
+
+  const reportColumns = await prismadb.reportColumns.findMany({
+    orderBy: {
+      ordering: "asc",
+    },
+  });
+
+  await prismadb.$disconnect();
+
   return (
-    <div className="px-10 py-10 min-h-screen">
-      <ReportClient report={report} reportColumns={report!.columns} />
+    <div className="px-10 pb-10 pt-3 min-h-screen">
+      <ReportClient
+        report={report}
+        reportColumns={reportColumns}
+        reportRoles={report!.reportRole}
+        reportParams={report!.params}
+        metaBranchs={metaBranchs}
+        metaCurrencies={metaCurrencies}
+      />
     </div>
   );
 };

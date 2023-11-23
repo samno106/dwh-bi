@@ -10,13 +10,18 @@ export async function GET(
 ) {
   try {
     const reports = await prismadb.reports.findMany({
-      where: {
-        role_id: params.roleId,
+      include: {
+        reportRole: {
+          where: {
+            report_id: params.roleId,
+          },
+        },
       },
       orderBy: {
         created_at: "desc",
       },
     });
+    await prismadb.$disconnect();
     return Response.json(reports);
   } catch (error) {
     console.log("[REPORT_BY_ROLE_GET]", error);
